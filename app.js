@@ -71,7 +71,55 @@ bot.dialog('aboutDialog',[
     function (session) {
         session.sendTyping();
         SpaceX.getCompanyInfo( function ( err, data) {
-            session.send(JSON.stringify(data))
+            var adaptiveCard = {
+              "type": "message",
+              "text": "Information",
+              "attachments": [
+                {
+                  "contentType": "application/vnd.microsoft.card.adaptive",
+                  "content": {
+                    "type": "AdaptiveCard",
+                    "version": "1.0",
+                    "body": [
+                      {
+                        "type": "TextBlock",
+                        "text": data.name,
+                        "size": "large"
+                      },
+                      {
+                        "type": "FactSet",
+                        "facts": [
+                            {
+                                "title": "Fondateur",
+                                "value": data.founder
+                            },
+                            {
+                                "title": "Fondée en ",
+                                "value": data.founded
+                            },
+                            {
+                                "title": "Nombres d'employés",
+                                "value": data.employees
+                            },
+                            {
+                                "title": "Adresse",
+                                "value": data.headquarters.address + '<br>' + data.headquarters.city + ', ' + data.headquarters.state
+                            }
+                        ]
+                      }
+                    ],
+                    "actions": [
+                      {
+                        "type": "Action.OpenUrl",
+                        "url": "www.spacex.com/",
+                        "title": "En savoir plus"
+                      }
+                    ]
+                  }
+                }
+                ]
+            }
+            session.endDialogWithResult(adaptiveCard)
         });
 
     }
