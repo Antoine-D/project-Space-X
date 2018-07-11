@@ -1,7 +1,6 @@
 var restify = require ('restify');
 var builder = require('botbuilder');
 var SpaceXAPI = require('SpaceX-API-Wrapper');
-var https = require('https');
 var SpaceX = new SpaceXAPI();
 
 //server
@@ -47,7 +46,7 @@ var menuItems = {
     "Past Launch" :{
         item : "pastLaunchDialog"
     },
-    "All Laucnhes" :{
+    "All Launches" :{
         item : "allLaunchesDialog"
     },
 };
@@ -72,6 +71,79 @@ bot.dialog('aboutDialog',[
     function (session) {
         session.sendTyping();
         SpaceX.getCompanyInfo( function ( err, data) {
+            session.send(JSON.stringify(data))
+        });
+
+    }
+
+]);
+
+bot.dialog('pastLaunchDialog', [
+    function(session){
+
+        session.sendTyping();
+        SpaceX.getLatestLaunch( function ( err, data) {
+            session.send(JSON.stringify(data))
+
+
+            // console.log(info);
+            // var adaptativeCard = {
+            //     "type": "message",
+            //     "text": "We know everything.",
+            //     "attachments": [
+            //         {
+            //             "contentType": "application/vnd.microsoft.card.adaptive",
+            //             "content": {
+            //                 "type": "AdaptiveCard",
+            //                 "version": "1.0",
+            //                 "body": [
+            //                     {
+            //                         "type": "TextBlock",
+            //                         "text": (data.details ? data.details : "< pas d'information >"),
+            //                         "size": "large"
+            //                     },
+            //                     {
+            //                         "type": "TextBlock",
+            //                         "text": "Nous savons tout."
+            //                     },
+            //                     {
+            //                         "type": "TextBlock",
+            //                         "text": "- Anonymous",
+            //                         "separation": "none"
+            //                     }
+            //                 ],
+            //                 "actions": [
+            //                     {
+            //                         "type": "Action.OpenUrl",
+            //                         "url": "http://adaptivecards.io",
+            //                         "title": "Learn More"
+            //                     }
+            //                 ]
+            //             }
+            //         }
+            //     ]
+            // }
+            // session.send(adaptativeCard);
+        });
+    }
+]);
+
+
+bot.dialog('allLaunchesDialog',[
+    function (session) {
+        session.sendTyping();
+        SpaceX.getAllLaunches({}, function ( err, data) {
+            session.send(JSON.stringify(data))
+        });
+
+    }
+
+]);
+
+bot.dialog('nextLaunchDialog',[
+    function (session) {
+        session.sendTyping();
+        SpaceX.getAllUpcomingLaunches({}, function ( err, data) {
             session.send(JSON.stringify(data))
         });
 
